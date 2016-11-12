@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OpenC1Logic;
+using WebApplication1.Helpers;
+using WebApplication1.Services.Cars;
+using WebApplication1.Services.Data;
+using WebApplication1.Services.Pix;
 
 namespace WebApplication1
 {
@@ -20,6 +21,8 @@ namespace WebApplication1
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            //todo this is bad here
+            GameVars.BasePath = @"C:\gry\carma\data\";
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -29,6 +32,10 @@ namespace WebApplication1
         {
             // Add framework services.
             services.AddMvc();
+            services.AddSingleton<IFilesHelper, FilesHelper>();
+            services.AddSingleton<IDataService, DataService>();
+            services.AddSingleton<IPixService, PixService>();
+            services.AddScoped<ICarsService, CarsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,8 +59,14 @@ namespace WebApplication1
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    name: "api",
+                    template: "api/{controller}/{action}",
+                    defaults: new { action = "Index" });
+                routes.MapRoute(
+                    name: "Default",
+                    template: "{*anything}",
+                    defaults: new { controller = "Home", action = "Index" }
+                );
             });
         }
     }
