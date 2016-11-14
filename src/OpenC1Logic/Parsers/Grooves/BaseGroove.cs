@@ -1,6 +1,6 @@
 ﻿using OpenC1Logic.Xna;
 
-enum Axis
+public enum Axis
 {
     X,
     Y,

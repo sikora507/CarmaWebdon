@@ -13,5 +13,12 @@
         // Summary:
         //     The texture coordinates.
         public Vector2 TextureCoordinate;
+
+        public VertexPositionNormalTexture(Vector3 position, Vector3 normal, Vector2 texture)
+        {
+            Position = position;
+            Normal = normal;
+            TextureCoordinate = texture;
+        }
     }
 }
